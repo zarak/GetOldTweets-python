@@ -36,8 +36,13 @@ class TweetManager:
 				tweet = models.Tweet()
 				
 				usernameTweet = tweetPQ("span:first.username.u-dir b").text();
-                                # TODO: Remove spaces after $, https:// and http://
-				txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text().replace('# ', '#').replace('@ ', '@'));
+				txt = re.sub(r"\s+", " ",
+                                        tweetPQ("p.js-tweet-text").text().replace(
+                                            '# ', '#').replace(
+                                                '@ ', '@').replace(
+                                                    '$ ', '$').replace(
+                                                        'https:// ', 'https://').replace(
+                                                            'http:// ', 'http://'));
 				retweets = int(tweetPQ("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replace(",", ""));
 				favorites = int(tweetPQ("span.ProfileTweet-action--favorite span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replace(",", ""));
 				dateSec = int(tweetPQ("small.time span.js-short-timestamp").attr("data-time"));
@@ -56,9 +61,11 @@ class TweetManager:
 				tweet.date = datetime.datetime.fromtimestamp(dateSec)
 				tweet.retweets = retweets
 				tweet.favorites = favorites
+                                # print(tweet.text)
 				tweet.mentions = " ".join(re.compile('(@\\w*)').findall(tweet.text))
 				tweet.hashtags = " ".join(re.compile('(#\\w*)').findall(tweet.text))
-                                # TODO: Add cashtags field
+                                tweet.cashtags = " ".join(set(re.compile('(\$[^\d\W]+)').findall(tweet.text)))
+                                # print(tweet.cashtags)
 				tweet.geo = geo
 				
 				results.append(tweet)
