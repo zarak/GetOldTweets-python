@@ -36,6 +36,7 @@ class TweetManager:
 				tweet = models.Tweet()
 				
 				usernameTweet = tweetPQ("span:first.username.u-dir b").text();
+                                # TODO: Remove spaces after $, https:// and http://
 				txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text().replace('# ', '#').replace('@ ', '@'));
 				retweets = int(tweetPQ("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replace(",", ""));
 				favorites = int(tweetPQ("span.ProfileTweet-action--favorite span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replace(",", ""));
@@ -57,6 +58,7 @@ class TweetManager:
 				tweet.favorites = favorites
 				tweet.mentions = " ".join(re.compile('(@\\w*)').findall(tweet.text))
 				tweet.hashtags = " ".join(re.compile('(#\\w*)').findall(tweet.text))
+                                # TODO: Add cashtags field
 				tweet.geo = geo
 				
 				results.append(tweet)
